@@ -1,0 +1,41 @@
+services:
+  mysqldb:
+    image: mysql:8
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: Harsha@123
+      MYSQL_DATABASE: digital_wallet
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    networks:
+      - springboot-mysql-net
+
+  backend:
+    image: harshavardhan31191/dockerr-backend:latest
+    container_name: springboot
+    ports:
+      - "2025:8082"
+    depends_on:
+      - mysqldb
+    restart: on-failure
+    networks:
+      - springboot-mysql-net
+
+  frontend:
+    image: harshavardhan31191/dockerr-frontend:latest
+    container_name: react
+    ports:
+      - "4000:80"
+    depends_on:
+      - backend
+    restart: on-failure
+    networks:
+      - springboot-mysql-net
+
+volumes:
+  mysql_data:
+
+networks:
+  springboot-mysql-net:
